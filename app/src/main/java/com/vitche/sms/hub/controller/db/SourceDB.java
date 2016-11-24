@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
 import com.vitche.sms.hub.model.Source;
-import com.vitche.sms.hub.view.SourceActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +54,8 @@ public class SourceDB extends MainAppDB {
             }
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
+            db.close();
             return null;
-        }finally {
-
-
         }
         ArrayList<PhoneNumberDataSource> sources = null;
 
@@ -68,9 +65,9 @@ public class SourceDB extends MainAppDB {
             int descriptionColIndex = cursor.getColumnIndex(DESCRIPTION);
             do {
                 Source source = new Source();
-                source.setTelNumber(cursor.getString(idColIndex));
+                source.setPhoneNumber(cursor.getString(idColIndex));
                 source.setDecription(cursor.getString(descriptionColIndex));
-//                source.setMessages(MessageDB.getAllMessages(source.getTelNumber()));
+                source.setMessages(MessageDB.getAllMessages(ctx, source.getPhoneNumber()));
                 sources.add(source);
             }while (cursor.moveToNext());
 
@@ -91,9 +88,9 @@ public class SourceDB extends MainAppDB {
             {
                 if (cursor.moveToFirst())
                 {
-                    source.setTelNumber(cursor.getString(cursor.getColumnIndex(UID)));
+                    source.setPhoneNumber(cursor.getString(cursor.getColumnIndex(UID)));
                     source.setDecription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
-                    source.setMessages(MessageDB.getAllMessages(sourceId));
+                    source.setMessages(MessageDB.getAllMessages(ctx, sourceId));
                 }
                 cursor.close();
             }

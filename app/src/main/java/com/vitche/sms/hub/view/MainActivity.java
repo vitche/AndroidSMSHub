@@ -18,13 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vitche.sms.hub.R;
-import com.vitche.sms.hub.controller.db.MainAppDB;
+import com.vitche.sms.hub.controller.MessageListenerService;
 import com.vitche.sms.hub.controller.db.SourceDB;
 import com.vitche.sms.hub.model.Constants;
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
-import com.vitche.sms.hub.model.Source;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         lvSources.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String sourceId = getSoucesList().get(i).getTelNumber();
+                String sourceId = getSoucesList().get(i).getPhoneNumber();
                 Intent intent = new Intent(MainActivity.this, SourceActivity.class);
                 intent.putExtra(Constants.CLICKED_ITEM_ID, "" + sourceId);
                 startActivity(intent);
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         lvSources.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showDeleteDialog(getSoucesList().get(i).getTelNumber());
+                showDeleteDialog(getSoucesList().get(i).getPhoneNumber());
                 return true;
             }
         });
@@ -129,13 +127,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void stopServiceAndExit() {
+        stopService(new Intent(this, MessageListenerService.class));
         Log.d(TAG, "------MainActivity : stopServiceAndExit: ");
-        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
     }
 
     private void startServiceAndExit() {
+        startService(new Intent(this, MessageListenerService.class));
         Log.d(TAG, "------MainActivity : startServiceAndExit: ");
-        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         List<PhoneNumberDataSource> sourceList;
 
         SourcesAdapter(List<PhoneNumberDataSource> list) {
-            Log.d(TAG, "------SourcesAdapter : SourcesAdapter: list size = " + list.size());
+//            Log.d(TAG, "------SourcesAdapter : SourcesAdapter: list size = " + list.size());
             sourceList = list;
         }
 
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 holder = (ViewHolder) view.getTag();
             }
 
-            holder.tvTelNumber.setText(source.getTelNumber());
+            holder.tvTelNumber.setText(source.getPhoneNumber());
             holder.tvLastSMSdate.setText("TODO get last sms date");
             holder.tvLastSMSbody.setText("TODO get last sms body");
 

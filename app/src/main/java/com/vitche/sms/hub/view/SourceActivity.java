@@ -2,41 +2,70 @@ package com.vitche.sms.hub.view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.vitche.sms.hub.R;
+import com.vitche.sms.hub.controller.db.MessageDB;
 import com.vitche.sms.hub.controller.db.SourceDB;
 import com.vitche.sms.hub.model.Constants;
+import com.vitche.sms.hub.model.Message;
 import com.vitche.sms.hub.model.Source;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class SourceActivity extends AppCompatActivity {
 
-    TextView tvItemId;
+    TextView tvSourceId;
+    TextView tvSourceDecription;
+    ListView lvMessages;
     String sourceId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_source);
 
-        tvItemId = (TextView)findViewById(R.id.tv_item_id);
+        tvSourceId = (TextView)findViewById(R.id.tv_source_id);
+        tvSourceDecription = (TextView)findViewById(R.id.tv_source_decription);
+        lvMessages = (ListView) findViewById(R.id.lv_messages);
+        lvMessages.setEmptyView(findViewById(R.id.tv_messages_empty));
+
         sourceId = getIntent().getStringExtra(Constants.CLICKED_ITEM_ID);
+
         Source source = SourceDB.getSourceInfo(this, sourceId);
-        String textInfo;
         if (source == null) {
-            textInfo = "some error...";
+            tvSourceId.setText("some error...");
+            tvSourceDecription.setText("some error...");
         }else {
-            textInfo = "N = "  + source.getTelNumber() + " , description = " + source.getDecription() + " , messages = " + source.getMessages().size();
+            tvSourceId.setText(source.getPhoneNumber());
+            tvSourceDecription.setText(source.getDecription());
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, getAllSourceMessages());
+            lvMessages.setAdapter(adapter);
         }
-        tvItemId.setText(textInfo);
+
 
 
     }
 
+    private ArrayList<String> getAllSourceMessages(){
+        ArrayList<Message> messages =  MessageDB.getAllMessages(this, sourceId);
+        ArrayList<String> result = new ArrayList<>();
+        if (messages != null)
+        for (int i = 0; i < messages.size(); i++) {
+            String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(messages.get(i).getId()));
+            result.add(date + "  " + messages.get(i).getBody());
+        }
+        return result;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_source, menu);

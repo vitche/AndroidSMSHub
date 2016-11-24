@@ -4,15 +4,15 @@ package com.vitche.sms.hub.model;
  * Created by Burmaka V on 24.11.2016.
  */
 public class Message {
-    private int id;
+    private long id;
     private String body;
-    private String date;
 
-    public int getId() {
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -24,11 +24,4 @@ public class Message {
         this.body = body;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 }
