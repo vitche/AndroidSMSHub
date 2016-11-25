@@ -1,8 +1,13 @@
 package com.vitche.sms.hub.controller.db;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 
 import com.vitche.sms.hub.model.Message;
+import com.vitche.sms.hub.model.PhoneNumberDataSource;
+import com.vitche.sms.hub.model.Source;
 
 import java.util.ArrayList;
 
@@ -19,8 +24,7 @@ public class MessageDB extends MainAppDB {
     private static String createMessagesTableQuery(String sourceUID) {
         return "create table " + tableName(sourceUID) + " (" +
                 ID + " integer primary key, " +
-                BODY + " text ," +
-                DATE + " text " +
+                BODY + " text " +
                 ");";
     }
 
@@ -36,28 +40,70 @@ public class MessageDB extends MainAppDB {
         return exequteAnySingeQuery(ctx, "DROP TABLE IF EXISTS " + tableName(sourceUID));
     }
 
-    public static void insertMessage(Context ctx, String sourceUID, int id, String body, String date){
-//        TODO
-    }
-    private static void deleteMessage(Context ctx, String soureceUID, int id) {
-//    TODO
-//        EventsDB db = new EventsDB(ctx);
-//        db.open();
-//        int delCount = db.mDB.delete(DB_TABLE, UID + " = " + "\"" +uid + "\"", null);
-////        db.logAllData();
-//        db.close();
+    public static long insertMessage(Context context, String phoneNumber, long timeStamp, String msgBody) {
+        long result = -1;
+
+        ContentValues cv = new ContentValues();
+        cv.put(ID, timeStamp);
+        cv.put(BODY, msgBody);
+
+        MainAppDB db = new MainAppDB(context);
+        db.open();
+        try {
+            result = db.mDB.insert(tableName(phoneNumber), null, cv);
+        } catch (Exception e) {
+            Log.e(TAG, "------MessageDB : insertMessage " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return result;
     }
 
-    public static ArrayList<Message> getAllMessages(String telNumber) {
-//        TODO
-        ArrayList<Message> messages = new ArrayList<Message>();
-        for (int i = 0; i < 5; i++) {
-            Message message = new Message();
-            message.setId(i);
-            message.setDate("test date " + i);
-            message.setBody("test body " + i);
-            messages.add(message);
+    private static void deleteMessage(Context ctx, String soureceUID, int id) {
+//        TODO test
+        MainAppDB db = new MainAppDB(ctx);
+        db.open();
+
+        try {
+             db.mDB.rawQuery("delete from " + tableName(soureceUID) + " where " + ID + "='" + id + "'" , null);
+              Log.d(TAG, "------MessageDB : deleteMessage: " );
+        } catch (Exception e) {
+            Log.e(TAG, "------MessageDB : deleteMessage: " + e.getMessage());
         }
+        db.close();
+    }
+
+    public static ArrayList<Message> getAllMessages(Context ctx, String telNumber) {
+//        TODO test
+
+        MainAppDB db = new MainAppDB(ctx);
+        db.open();
+        Cursor cursor = null;
+        try {
+            cursor = db.mDB.query(tableName(telNumber), null, null, null, null, null, null);
+            if (cursor == null) {
+                return null;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            db.close();
+            return null;
+        }
+        ArrayList<Message> messages = null;
+
+        if (cursor.moveToFirst()) {
+            messages = new ArrayList<Message>();
+            int idColIndex = cursor.getColumnIndex(ID);
+            int bodyColIndex = cursor.getColumnIndex(BODY);
+            do {
+                Message message = new Message();
+                message.setId(cursor.getLong(idColIndex));
+                message.setBody(cursor.getString(bodyColIndex));
+                messages.add(message);
+            }while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
         return messages;
     }
 }

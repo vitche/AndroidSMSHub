@@ -6,16 +6,16 @@ import java.util.ArrayList;
  * Created by Burmaka V on 21.11.2016.
  */
 public class Source implements PhoneNumberDataSource{
-    private String telNumber;
+    private String phoneNumber;
     private String decription;
     private ArrayList<Message> messages;
 
-    public String getTelNumber() {
-        return telNumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setTelNumber(String telNumber) {
-        this.telNumber = telNumber;
+    public void setPhoneNumber(String telNumber) {
+        this.phoneNumber = telNumber;
     }
 
     public ArrayList<Message> getMessages() {

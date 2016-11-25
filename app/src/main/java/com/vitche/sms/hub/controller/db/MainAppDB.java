@@ -20,8 +20,6 @@ public class MainAppDB {
     protected static final String DESCRIPTION = "description";
 
     protected static final String BODY = "body";
-    protected static final String DATE = "date";
-
 
     protected static final int DB_VERSION = 1;
     protected Context mCtx;
