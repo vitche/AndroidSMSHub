@@ -17,4 +17,6 @@
     <string name="phone_decription_hint">decription</string>
     <string name="del_sms">Delete sms</string>
     <string name="no_messages">No messages</string>
+    <string name="notification_title">sources are observed</string>
+    <string name="notification_content">new messages are recived</string>
 </resources>
