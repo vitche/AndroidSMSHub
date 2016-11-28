@@ -8,15 +8,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainActivity">
+        <activity android:name=".view.MainActivity"
+            android:label="@string/observed_sources" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.NewSourceActivity" />
-        <activity android:name=".view.SourceActivity"></activity>
+        <activity android:name=".view.NewSourceActivity"
+            android:label="@string/new_source"/>
+        <activity android:name=".view.SourceActivity"
+            android:label="@string/source"></activity>
         <service
             android:name=".controller.MessageListenerService"
             android:enabled="true"

@@ -20,8 +20,12 @@ import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.MessageListenerService;
 import com.vitche.sms.hub.controller.db.SourceDB;
 import com.vitche.sms.hub.model.Constants;
+import com.vitche.sms.hub.model.Message;
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lvSources;
     SourcesAdapter sourcesAdapter;
 
-    Button btnSMSLog;
+//    Button btnSMSLog;
 
 
     //    TODO notification
@@ -82,18 +86,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnSMSLog = (Button) findViewById(R.id.btn_log_sms);
-        btnSMSLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SMSNotification.updateNotification(MainActivity.this, null);
-            }
-        });
+//        btnSMSLog = (Button) findViewById(R.id.btn_log_sms);
+//        btnSMSLog.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SMSNotification.updateNotification(MainActivity.this, null);
+//            }
+//        });
     }
 
     private void showDeleteDialog(final String sourceUID) {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.delete_source) + " " + sourceUID);
+        dialog.setTitle('"' + getString(R.string.delete_source) + "\" " + sourceUID);
         dialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -134,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private List<PhoneNumberDataSource> getSoucesList() {
-        return SourceDB.getAllSorces(this);
+        return SourceDB.getAllSorcesSorted(this);
     }
 
     private void stopServiceAndExit() {
@@ -218,9 +222,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             holder.tvTelNumber.setText(source.getPhoneNumber());
-            holder.tvLastSMSdate.setText("TODO get last sms date");
-            holder.tvLastSMSbody.setText("TODO get last sms body");
-
+            List<Message> messagesList = source.getMessages();
+            if (messagesList.size() > 0 ) {
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(messagesList.get(Constants.LAST_SMS_INDEX).getId()));
+                holder.tvLastSMSdate.setText(date);
+                holder.tvLastSMSbody.setText(messagesList.get(Constants.LAST_SMS_INDEX).getBody());
+            }else {
+                holder.tvLastSMSdate.setText(getString(R.string.no_messages));
+            }
             return view;
         }
     }

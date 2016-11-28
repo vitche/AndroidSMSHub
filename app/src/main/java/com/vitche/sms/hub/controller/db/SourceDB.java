@@ -5,11 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.vitche.sms.hub.model.Constants;
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
 import com.vitche.sms.hub.model.Source;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Burmaka V on 24.11.2016.
@@ -66,15 +71,23 @@ public class SourceDB extends MainAppDB {
                 Source source = new Source();
                 source.setPhoneNumber(cursor.getString(idColIndex));
                 source.setDecription(cursor.getString(descriptionColIndex));
-                source.setMessages(MessageDB.getAllMessages(ctx, source.getPhoneNumber()));
+                source.setMessages(MessageDB.getAllMessagesInBackOrder(ctx, source.getPhoneNumber()));
                 sources.add(source);
             }while (cursor.moveToNext());
 
             cursor.close();
         }
         db.close();
+
         return sources;
     }
+
+    public static List<PhoneNumberDataSource> getAllSorcesSorted(Context ctx){
+        List<PhoneNumberDataSource> sources = getAllSorces(ctx);
+        Collections.sort(sources);
+        return sources;
+    }
+
 
     public static Source getSourceInfo(Context ctx, String sourceId) {
         Source source = new Source();
@@ -89,7 +102,7 @@ public class SourceDB extends MainAppDB {
                 {
                     source.setPhoneNumber(cursor.getString(cursor.getColumnIndex(UID)));
                     source.setDecription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
-                    source.setMessages(MessageDB.getAllMessages(ctx, sourceId));
+                    source.setMessages(MessageDB.getAllMessagesInBackOrder(ctx, sourceId));
                 }
                 cursor.close();
             }

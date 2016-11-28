@@ -73,7 +73,7 @@ public class MessageDB extends MainAppDB {
         db.close();
     }
 
-    public static ArrayList<Message> getAllMessages(Context ctx, String telNumber) {
+    public static ArrayList<Message> getAllMessagesInBackOrder(Context ctx, String telNumber) {
 //        TODO test
 
         MainAppDB db = new MainAppDB(ctx);
@@ -89,10 +89,10 @@ public class MessageDB extends MainAppDB {
             db.close();
             return null;
         }
-        ArrayList<Message> messages = null;
+        ArrayList<Message> messages = new ArrayList<Message>();
 
-        if (cursor.moveToFirst()) {
-            messages = new ArrayList<Message>();
+//        if (cursor.moveToFirst()) {
+        if (cursor.moveToLast()) {
             int idColIndex = cursor.getColumnIndex(ID);
             int bodyColIndex = cursor.getColumnIndex(BODY);
             do {
@@ -100,7 +100,8 @@ public class MessageDB extends MainAppDB {
                 message.setId(cursor.getLong(idColIndex));
                 message.setBody(cursor.getString(bodyColIndex));
                 messages.add(message);
-            }while (cursor.moveToNext());
+//            }while (cursor.moveToNext());
+            }while (cursor.moveToPrevious());
             cursor.close();
         }
         db.close();

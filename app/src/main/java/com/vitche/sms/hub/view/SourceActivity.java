@@ -57,7 +57,7 @@ public class SourceActivity extends AppCompatActivity {
     }
 
     private ArrayList<String> getAllSourceMessages(){
-        ArrayList<Message> messages =  MessageDB.getAllMessages(this, sourceId);
+        ArrayList<Message> messages =  MessageDB.getAllMessagesInBackOrder(this, sourceId);
         ArrayList<String> result = new ArrayList<>();
         if (messages != null)
         for (int i = 0; i < messages.size(); i++) {
