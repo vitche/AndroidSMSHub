@@ -11,6 +11,7 @@ import com.vitche.sms.hub.controller.db.MessageDB;
 import com.vitche.sms.hub.controller.db.SourceDB;
 import com.vitche.sms.hub.model.Message;
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
+import com.vitche.sms.hub.view.SMSNotification;
 
 import java.util.Comparator;
 import java.util.List;
@@ -58,6 +59,8 @@ public class SMSReceiver extends BroadcastReceiver {
                 if (phoneNumber.equals(msg_from) || ("+38" + phoneNumber).equals(msg_from)) {
                     MessageDB.insertMessage(context, phoneNumber, timeStamp, msgBody);
                     listsInvalidate();
+                    SMSNotification.setMessagesNum(SMSNotification.getMessagesNum()+1);
+                    SMSNotification.updateNotification(context, null);
                 }
             }
     }

@@ -81,6 +81,13 @@ public class NewSourceActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        Log.e(TAG, "------NewSourceActivity : onBackPressed: ");
+        savePrefs();
+    }
+
     private void savePrefs() {
 //        if (prefs == null){
 //            prefs = getSharedPreferences(Constants.GUARD_SETTINS_PREFS , MODE_PRIVATE);

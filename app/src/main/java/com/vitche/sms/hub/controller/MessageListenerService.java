@@ -1,15 +1,27 @@
 package com.vitche.sms.hub.controller;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.vitche.sms.hub.R;
+import com.vitche.sms.hub.controller.db.SourceDB;
+import com.vitche.sms.hub.view.MainActivity;
+import com.vitche.sms.hub.view.SMSNotification;
 
 public class MessageListenerService extends Service {
     private static final String TAG = "myLogs";
     public static final String SMS_RECEIVER_TAG = "SMS_RECEIVER_TAG";
+
     BroadcastReceiver smsReceiver;
 
     public MessageListenerService() {
@@ -23,6 +35,13 @@ public class MessageListenerService extends Service {
 
         IntentFilter intentFilter = new IntentFilter(SMS_RECEIVER_TAG);
         registerReceiver(smsReceiver, intentFilter);
+        int sourceNumber = getSourcesNumber();
+        if ( sourceNumber > 0){
+            SMSNotification.initNotification(this, "" + sourceNumber);
+        }else {
+            Toast.makeText(MessageListenerService.this, "Not started, add source", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -43,6 +62,13 @@ public class MessageListenerService extends Service {
         if (smsReceiver != null) {
             unregisterReceiver(smsReceiver);
         }
+        SMSNotification.cancelNotification(this);
         Log.d(TAG, "------MessageListenerService : onDestroy: ");
     }
+
+
+    private int getSourcesNumber(){
+        return SourceDB.getAllSorces(this).size();
+    }
+
 }

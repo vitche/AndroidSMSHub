@@ -57,10 +57,9 @@ public class SourceDB extends MainAppDB {
             db.close();
             return null;
         }
-        ArrayList<PhoneNumberDataSource> sources = null;
+        ArrayList<PhoneNumberDataSource> sources = new ArrayList<PhoneNumberDataSource>();
 
         if (cursor.moveToFirst()) {
-            sources = new ArrayList<PhoneNumberDataSource>();
             int idColIndex = cursor.getColumnIndex(UID);
             int descriptionColIndex = cursor.getColumnIndex(DESCRIPTION);
             do {

@@ -15,7 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.MessageListenerService;
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnStop;
     ListView lvSources;
     SourcesAdapter sourcesAdapter;
+
+    Button btnSMSLog;
 
 
     //    TODO notification
@@ -80,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 stopServiceAndExit();
             }
         });
+
+        btnSMSLog = (Button) findViewById(R.id.btn_log_sms);
+        btnSMSLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SMSNotification.updateNotification(MainActivity.this, null);
+            }
+        });
     }
 
     private void showDeleteDialog(final String sourceUID) {
@@ -110,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateListView();
+        SMSNotification.setMessagesNum(0);
+        SMSNotification.updateNotification(this, "" + SourceDB.getAllSorces(this).size());
     }
 
     private void updateListView() {
@@ -155,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     class SourcesAdapter extends BaseAdapter {
         List<PhoneNumberDataSource> sourceList;
