@@ -7,5 +7,6 @@ public interface Constants {
     String GUARD_SETTINS_PREFS = "guard_settings_prefs";
     String SETTINS_PHONE_NUMBER = "settins_phone_number";
     String CLICKED_ITEM_ID = "clicked_item_id";
+    int LAST_SMS_INDEX = 0;
 
 }

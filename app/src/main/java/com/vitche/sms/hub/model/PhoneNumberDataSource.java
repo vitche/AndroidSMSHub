@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by Burmaka V on 21.11.2016.
  */
-public interface PhoneNumberDataSource {
+public interface PhoneNumberDataSource extends Comparable {
     String getPhoneNumber();
     void setPhoneNumber(String phoneNumber);
     ArrayList<Message> getMessages();
