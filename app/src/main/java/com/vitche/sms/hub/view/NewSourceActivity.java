@@ -35,7 +35,7 @@ public class NewSourceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_source);
 
-//        prefs = getSharedPreferences(Constants.GUARD_SETTINS_PREFS , MODE_PRIVATE);
+//        prefs = getSharedPreferences(Constants.SMSHUB_SETTINS_PREFS , MODE_PRIVATE);
 
         btnFromContacts = (Button)findViewById(R.id.btn_from_contacts);
         btnSaveSource = (Button)findViewById(R.id.btn_save_source_settings);
@@ -90,7 +90,7 @@ public class NewSourceActivity extends AppCompatActivity {
 
     private void savePrefs() {
 //        if (prefs == null){
-//            prefs = getSharedPreferences(Constants.GUARD_SETTINS_PREFS , MODE_PRIVATE);
+//            prefs = getSharedPreferences(Constants.SMSHUB_SETTINS_PREFS , MODE_PRIVATE);
 //        }
 //        SharedPreferences.Editor ed = prefs.edit();
 //

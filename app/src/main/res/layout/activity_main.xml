@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".view.MainActivity">
+    tools:context=".view.SMSHubMainActivity">
 
     <TextView
         android:text="@string/sources_list_header"
@@ -28,34 +28,5 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:text="@string/no_sources" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
-    <Button
-        android:id="@+id/btn_start"
-        android:text="@string/start_and_exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"/>
-    <Button
-        android:id="@+id/btn_stop"
-        android:text="@string/stop_and_exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"/>
-    </LinearLayout>
-    <Button
-        android:id="@+id/btn_log_sms"
-        android:text="@string/log_sms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone"/>
 
 </LinearLayout>

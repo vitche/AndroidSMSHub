@@ -3,7 +3,6 @@ package com.vitche.sms.hub.view;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -25,7 +24,7 @@ public class SMSNotification {
         notificationManager = (NotificationManager) ctx
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(ctx, MainActivity.class);
+        Intent intent = new Intent(ctx, SMSHubMainActivity.class);
 
         mBuilder = new Notification.Builder(ctx);
         Notification notification = mBuilder
@@ -53,7 +52,7 @@ public class SMSNotification {
                         .setNumber(messagesNum);
                 Notification notification = mBuilder.build();
 
-                Intent intent = new Intent(ctx, MainActivity.class);
+                Intent intent = new Intent(ctx, SMSHubMainActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(ctx, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 notification.contentIntent = pendingIntent;
 

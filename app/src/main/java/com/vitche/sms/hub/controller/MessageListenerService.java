@@ -1,28 +1,24 @@
 package com.vitche.sms.hub.controller;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.IBinder;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.db.SourceDB;
-import com.vitche.sms.hub.view.MainActivity;
 import com.vitche.sms.hub.view.SMSNotification;
 
 public class MessageListenerService extends Service {
     private static final String TAG = "myLogs";
     public static final String SMS_RECEIVER_TAG = "SMS_RECEIVER_TAG";
+    public static final String CALL_RECEIVER_TAG = "CALL_RECEIVER_TAG";
 
     BroadcastReceiver smsReceiver;
+    BroadcastReceiver callReceiver;
 
     public MessageListenerService() {
     }
@@ -31,6 +27,14 @@ public class MessageListenerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "------MessageListenerService : onCreate: ");
+
+        callReceiver = new CallReceiver();
+
+        IntentFilter callIntentFilter = new IntentFilter();
+        callIntentFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        registerReceiver(callReceiver, callIntentFilter);
+
+
         smsReceiver = new SMSReceiver();
 
         IntentFilter intentFilter = new IntentFilter(SMS_RECEIVER_TAG);
@@ -61,6 +65,10 @@ public class MessageListenerService extends Service {
         super.onDestroy();
         if (smsReceiver != null) {
             unregisterReceiver(smsReceiver);
+        }
+
+        if (callReceiver != null) {
+            unregisterReceiver(callReceiver);
         }
         SMSNotification.cancelNotification(this);
         Log.d(TAG, "------MessageListenerService : onDestroy: ");

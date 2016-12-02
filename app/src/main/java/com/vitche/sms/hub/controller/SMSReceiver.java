@@ -44,7 +44,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         checkSMS(context, msg_from, msgBody, timeStamp);
                     }
                 } catch (Exception e) {
-//                            Log.d("Exception caught",e.getMessage());
+                            Log.d("Exception caught",e.getMessage());
                 }
             }
         }
@@ -69,16 +69,4 @@ public class SMSReceiver extends BroadcastReceiver {
 //        TODO invalidate messages and sources lists
     }
 
-    class MessageComparator implements Comparator<Message> {
-
-        @Override
-        public int compare(Message message, Message t1) {
-            if (message.getId() > t1.getId()) {
-                return 1;
-            } else if (message.getId() < t1.getId()) {
-                return -1;
-            }
-            return 0;
-        }
-    }
 }

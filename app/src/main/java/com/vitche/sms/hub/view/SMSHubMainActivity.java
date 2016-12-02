@@ -1,8 +1,12 @@
 package com.vitche.sms.hub.view;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +20,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.vitche.sms.hub.BuildConfig;
 import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.MessageListenerService;
 import com.vitche.sms.hub.controller.db.SourceDB;
@@ -24,26 +29,23 @@ import com.vitche.sms.hub.model.Message;
 import com.vitche.sms.hub.model.PhoneNumberDataSource;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class SMSHubMainActivity extends AppCompatActivity {
 
     private static final String TAG = "myLogs";
-    Button btnStart;
-    Button btnStop;
+    private static final int MENU_DEBUG_SCREEN = 1;
+
     ListView lvSources;
     SourcesAdapter sourcesAdapter;
+    SharedPreferences prefs;
 
-//    Button btnSMSLog;
-
-
-    //    TODO notification
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = getSharedPreferences(Constants.SMSHUB_SETTINS_PREFS, MODE_PRIVATE);
 
         sourcesAdapter = new SourcesAdapter(getSoucesList());
 
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String sourceId = getSoucesList().get(i).getPhoneNumber();
-                Intent intent = new Intent(MainActivity.this, SourceActivity.class);
+                Intent intent = new Intent(SMSHubMainActivity.this, SourceActivity.class);
                 intent.putExtra(Constants.CLICKED_ITEM_ID, "" + sourceId);
                 startActivity(intent);
             }
@@ -69,30 +71,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnStart = (Button) findViewById(R.id.btn_start);
-        btnStop = (Button) findViewById(R.id.btn_stop);
-
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startServiceAndExit();
+        if (prefs.getBoolean(Constants.ENABLE_SERVICE, true))
+            if (!isMyServiceRunning(MessageListenerService.class)) {
+                startService(new Intent(this, MessageListenerService.class));
             }
-        });
-
-        btnStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopServiceAndExit();
-            }
-        });
-
-//        btnSMSLog = (Button) findViewById(R.id.btn_log_sms);
-//        btnSMSLog.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                SMSNotification.updateNotification(MainActivity.this, null);
-//            }
-//        });
     }
 
     private void showDeleteDialog(final String sourceUID) {
@@ -141,21 +123,14 @@ public class MainActivity extends AppCompatActivity {
         return SourceDB.getAllSorcesSorted(this);
     }
 
-    private void stopServiceAndExit() {
-        stopService(new Intent(this, MessageListenerService.class));
-        Log.d(TAG, "------MainActivity : stopServiceAndExit: ");
-//        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
-    }
-
-    private void startServiceAndExit() {
-        startService(new Intent(this, MessageListenerService.class));
-        Log.d(TAG, "------MainActivity : startServiceAndExit: ");
-//        Toast.makeText(MainActivity.this, "do nothing", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        if (BuildConfig.DEBUG) {
+            menu.add(0, MENU_DEBUG_SCREEN, 0, "Start debug Activity");
+        }
         return true;
     }
 
@@ -167,10 +142,29 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, NewSourceActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.menu_settings:
+                Intent intentSettings = new Intent(this, SettingsActivity.class);
+                startActivity(intentSettings);
+                break;
+        }
+        if (BuildConfig.DEBUG) {
+            if (id == MENU_DEBUG_SCREEN) {
+//                Intent intent = new Intent(this, DebugActivity.class);
+//                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     class SourcesAdapter extends BaseAdapter {
         List<PhoneNumberDataSource> sourceList;
@@ -223,11 +217,11 @@ public class MainActivity extends AppCompatActivity {
 
             holder.tvTelNumber.setText(source.getPhoneNumber());
             List<Message> messagesList = source.getMessages();
-            if (messagesList.size() > 0 ) {
+            if (messagesList.size() > 0) {
                 String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(messagesList.get(Constants.LAST_SMS_INDEX).getId()));
                 holder.tvLastSMSdate.setText(date);
                 holder.tvLastSMSbody.setText(messagesList.get(Constants.LAST_SMS_INDEX).getBody());
-            }else {
+            } else {
                 holder.tvLastSMSdate.setText(getString(R.string.no_messages));
             }
             return view;

@@ -22,4 +22,9 @@
     <string name="observed_sources">Observed Sources</string>
     <string name="new_source">New Source</string>
     <string name="source">Source</string>
+    <string name="enable_service">Enable service</string>
+    <string name="service_started">Service started</string>
+    <string name="service_stopped">Service stopped</string>
+    <string name="disable_service_title">Do you really want to stop the service?</string>
+    <string name="disable_service_message">You can not obtain information about sources.</string>
 </resources>
