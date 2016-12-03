@@ -149,8 +149,8 @@ public class SMSHubMainActivity extends AppCompatActivity {
         }
         if (BuildConfig.DEBUG) {
             if (id == MENU_DEBUG_SCREEN) {
-//                Intent intent = new Intent(this, DebugActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, DebugActivity.class);
+                startActivity(intent);
             }
         }
         return super.onOptionsItemSelected(item);

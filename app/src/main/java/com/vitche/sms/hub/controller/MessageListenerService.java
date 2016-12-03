@@ -15,10 +15,10 @@ import com.vitche.sms.hub.view.SMSNotification;
 public class MessageListenerService extends Service {
     private static final String TAG = "myLogs";
     public static final String SMS_RECEIVER_TAG = "SMS_RECEIVER_TAG";
-    public static final String CALL_RECEIVER_TAG = "CALL_RECEIVER_TAG";
+
 
     BroadcastReceiver smsReceiver;
-    BroadcastReceiver callReceiver;
+//    BroadcastReceiver callReceiver;
 
     public MessageListenerService() {
     }
@@ -28,11 +28,11 @@ public class MessageListenerService extends Service {
         super.onCreate();
         Log.d(TAG, "------MessageListenerService : onCreate: ");
 
-        callReceiver = new CallReceiver();
+//        callReceiver = new CallReceiver();
 
-        IntentFilter callIntentFilter = new IntentFilter();
-        callIntentFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        registerReceiver(callReceiver, callIntentFilter);
+//        IntentFilter callIntentFilter = new IntentFilter();
+//        callIntentFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+//        registerReceiver(callReceiver, callIntentFilter);
 
 
         smsReceiver = new SMSReceiver();
@@ -67,9 +67,9 @@ public class MessageListenerService extends Service {
             unregisterReceiver(smsReceiver);
         }
 
-        if (callReceiver != null) {
-            unregisterReceiver(callReceiver);
-        }
+//        if (callReceiver != null) {
+//            unregisterReceiver(callReceiver);
+//        }
         SMSNotification.cancelNotification(this);
         Log.d(TAG, "------MessageListenerService : onDestroy: ");
     }

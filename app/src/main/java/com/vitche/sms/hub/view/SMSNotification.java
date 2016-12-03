@@ -29,7 +29,7 @@ public class SMSNotification {
         mBuilder = new Notification.Builder(ctx);
         Notification notification = mBuilder
                 .setContentTitle(sourcesNumber +  " " + ctx.getString(R.string.notification_title)) // TODO set and update source number
-                .setSmallIcon(R.drawable.ic_service_notification)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(false)
                 .build();
 
@@ -49,7 +49,8 @@ public class SMSNotification {
                     mBuilder.setContentTitle(sourcesNumber +  " " + ctx.getString(R.string.notification_title));
 
                 mBuilder.setContentText(messagesNum +  " " + ctx.getString(R.string.notification_content))
-                        .setNumber(messagesNum);
+                        .setNumber(messagesNum)
+                        .setAutoCancel(false);
                 Notification notification = mBuilder.build();
 
                 Intent intent = new Intent(ctx, SMSHubMainActivity.class);
