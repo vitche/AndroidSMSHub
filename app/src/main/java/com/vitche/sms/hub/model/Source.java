@@ -11,7 +11,7 @@ public class Source implements PhoneNumberDataSource{
     private static final String TAG = "myLogs";
     private String phoneNumber;
     private String decription;
-    private ArrayList<Message> messages;
+    private ArrayList<Message> messages = new ArrayList<Message>();
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -28,7 +28,9 @@ public class Source implements PhoneNumberDataSource{
     }
 
     public void setMessages(ArrayList<Message> messages) {
-        this.messages = messages;
+        if (messages != null) {
+            this.messages = messages;
+        }
     }
 
     public String getDecription() {

@@ -28,4 +28,5 @@
     <string name="disable_service_title">Do you really want to stop the service?</string>
     <string name="disable_service_message">You can not obtain information about sources.</string>
     <string name="choose_number_error">Some stange error. Enter by hands</string>
+    <string name="invalid_phone_format">Invalid phone format. It should be +XX XXX XXX XX XX</string>
 </resources>

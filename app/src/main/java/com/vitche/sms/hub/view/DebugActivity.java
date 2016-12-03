@@ -29,13 +29,15 @@ public class DebugActivity extends AppCompatActivity {
         setContentView(R.layout.activity_debug);
 
         btnDebug1 = (Button) findViewById(R.id.btn_debug1);
-        btnDebug1.setText("Del sms");
+        btnDebug1.setText("Click me");
         btnDebug1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
-                startActivityForResult(intent, PICK_CONTACT_REQUEST);
+                String str = "+333";
+                Log.d(TAG, "------DebugActivity : onClick: str = " + str);
+                str = str.replace("+", "");
+                Log.d(TAG, "------DebugActivity : onClick: str = " + str);
+
             }
         });
     }

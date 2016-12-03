@@ -3,18 +3,27 @@ package com.vitche.sms.hub.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.db.SourceDB;
+import com.vitche.sms.hub.model.PhoneNumberDataSource;
+
+import java.util.List;
 
 public class NewSourceActivity extends AppCompatActivity {
 
@@ -22,7 +31,7 @@ public class NewSourceActivity extends AppCompatActivity {
     static final int PICK_CONTACT_REQUEST = 1;
 
     Button btnFromContacts;
-    Button btnSaveSource;
+//    Button btnSaveSource;
     EditText etPhoneNumber;
     EditText etPhoneDescription;
 
@@ -31,8 +40,8 @@ public class NewSourceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_source);
 
-        btnFromContacts = (Button)findViewById(R.id.btn_from_contacts);
-        btnSaveSource = (Button)findViewById(R.id.btn_save_source_settings);
+        btnFromContacts = (Button) findViewById(R.id.btn_from_contacts);
+//        btnSaveSource = (Button) findViewById(R.id.btn_save_source_settings);
         btnFromContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,15 +56,72 @@ public class NewSourceActivity extends AppCompatActivity {
 //            }
 //        });
 
-        etPhoneNumber = (EditText)findViewById(R.id.et_phone_number);
-        etPhoneDescription = (EditText)findViewById(R.id.et_phone_decription);
+        etPhoneNumber = (EditText) findViewById(R.id.et_phone_number);
+        etPhoneDescription = (EditText) findViewById(R.id.et_phone_decription);
+        etPhoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                etPhoneNumber.setTextColor(Color.BLACK);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 //        TODO validate phone number
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        savePrefs();
+        if (phoneNumberValid() && !isObservedPhoneNumber()) {
+            super.onBackPressed();
+            savePrefs();
+        } else {
+            showPhoneNumberWarning();
+        }
+
+    }
+
+    private void showPhoneNumberWarning() {
+        if (etPhoneNumber != null){
+            etPhoneNumber.setTextColor(Color.RED);
+            Log.d(TAG, "------NewSourceActivity : showPhoneNumberWarning: " + etPhoneNumber.getTextColors().toString());
+        }
+        Toast.makeText(NewSourceActivity.this, getString(R.string.invalid_phone_format), Toast.LENGTH_SHORT).show();
+    }
+
+    private String getPhoneNumberFromET(){
+        String phNumber = null;
+        if (etPhoneNumber != null) {
+            phNumber = etPhoneNumber.getText().toString();
+            if (phNumber != null && !phNumber.isEmpty()) {
+                return phNumber;
+            }
+        }
+        return null;
+    }
+    private boolean phoneNumberValid() {
+        String phNumber = getPhoneNumberFromET();
+        if ( phNumber!= null ) {
+            return  PhoneNumberUtils.isGlobalPhoneNumber(phNumber);
+        }
+        return false;
+    }
+
+    private boolean isObservedPhoneNumber() {
+        List<PhoneNumberDataSource> list = SourceDB.getAllSorces(this); // TODO check if list size == 0
+            String phNumber = getPhoneNumberFromET();
+            if ( phNumber!= null ){
+                for (PhoneNumberDataSource source : list) {
+                    if (phNumber.equals(source.getPhoneNumber()))
+                        return true;
+                }
+            }
+        return false;
     }
 
     private void savePrefs() {
@@ -87,11 +153,11 @@ public class NewSourceActivity extends AppCompatActivity {
                         if (cursor.moveToFirst()) {
                             int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                             number = cursor.getString(column);
-                            if (number != null && !number.isEmpty()){
-                                if (etPhoneNumber != null){
+                            if (number != null && !number.isEmpty()) {
+                                if (etPhoneNumber != null) {
                                     etPhoneNumber.setText(number);
                                 }
-                            }else {
+                            } else {
                                 showFuckToast();
                             }
                         } else {
