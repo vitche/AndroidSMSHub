@@ -1,34 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vitche.sms.hub">
+
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainActivity"
-            android:label="@string/observed_sources" >
+        <activity
+            android:name=".view.SMSHubMainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.NewSourceActivity"
-            android:label="@string/new_source"/>
-        <activity android:name=".view.SourceActivity"
-            android:label="@string/source"></activity>
+        <activity
+            android:name=".view.NewSourceActivity"
+            android:label="@string/new_source" />
+        <activity
+            android:name=".view.SourceActivity"
+            android:label="@string/source" />
+
         <service
             android:name=".controller.MessageListenerService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+        <!-- android:priority="1000" -->
+
         <receiver android:name=".controller.SMSReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".controller.BootCompleteReceiver"
+            android:label="StartMyServiceAtBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <!-- <receiver android:name=".controller.CallReceiver"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.PHONE_STATE" /> -->
+        <!-- </intent-filter> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.NEW_OUTGOING_CALL" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+
+        <activity
+            android:name=".view.SettingsActivity"
+            android:label="@string/menu_settings" />
+        <activity android:name=".view.DebugActivity"></activity>
     </application>
 
 </manifest>

@@ -3,7 +3,10 @@ package com.vitche.sms.hub.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -22,7 +25,7 @@ import java.util.List;
 public class SMSReceiver extends BroadcastReceiver {
     private static final String TAG = "myLogs";
 
-//    TODO notification icon
+    //    TODO notification icon
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "------MessageListenerService : onReceive: ");
@@ -44,7 +47,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         checkSMS(context, msg_from, msgBody, timeStamp);
                     }
                 } catch (Exception e) {
-//                            Log.d("Exception caught",e.getMessage());
+                    Log.d("Exception caught", e.getMessage());
                 }
             }
         }
@@ -59,26 +62,67 @@ public class SMSReceiver extends BroadcastReceiver {
                 if (phoneNumber.equals(msg_from) || ("+38" + phoneNumber).equals(msg_from)) {
                     MessageDB.insertMessage(context, phoneNumber, timeStamp, msgBody);
                     listsInvalidate();
-                    SMSNotification.setMessagesNum(SMSNotification.getMessagesNum()+1);
+                    SMSNotification.setMessagesNum(SMSNotification.getMessagesNum() + 1);
                     SMSNotification.updateNotification(context, null);
+//                    deleteSMS(context, msgBody, msg_from);
+                } else if (msgBody != null && msgBody.contains(phoneNumber)) {
+                    MessageDB.insertMessage(context, phoneNumber, timeStamp, msgBody);
+                    listsInvalidate();
+                    SMSNotification.setMessagesNum(SMSNotification.getMessagesNum() + 1);
+                    SMSNotification.updateNotification(context, null);
+//                    deleteSMS(context, msgBody, msg_from);
                 }
             }
     }
+
+
+    /**
+     * Not working on 4.4 and higher, i.e. newer
+     * @param context
+     * @param message
+     * @param number
+     */
+    private void deleteSMS(final Context context, final String message, final String number) {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Uri uriSms = Uri.parse("content://sms/inbox");
+                    Cursor c = context.getContentResolver().query(uriSms,
+                            new String[]{"_id", "thread_id", "address",
+                                    "person", "date", "body"}, null, null, null);
+
+                    if (c != null && c.moveToFirst()) {
+                        do {
+
+                            long id = c.getLong(0);
+                            int thread_id = c.getInt(1);
+                            String address = c.getString(2);
+                            String body = c.getString(5);
+                            Log.d(TAG, "------SMSReceiver : deleteSMS: id = " + id + "  thread id = " + thread_id);
+
+                            if (message.equals(body) && address.equals(number)) {
+//                                context.getContentResolver().delete(
+//                                        Uri.parse("content://sms/" + id), null, null);
+                                context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + thread_id),null,null);
+                                Log.d(TAG, "------SMSReceiver : deleteSMS: deleted :" + number + body + id + " thr id = " + thread_id);
+                                break;
+                            }
+                        } while (c.moveToNext());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "------SMSReceiver : deleteSMS: Could not delete SMS from inbox: " + e.getMessage());
+                }
+            }
+        };
+        handler.postDelayed(runnable, 5000);
+
+    }
+
 
     private void listsInvalidate() {
 //        TODO invalidate messages and sources lists
     }
 
-    class MessageComparator implements Comparator<Message> {
-
-        @Override
-        public int compare(Message message, Message t1) {
-            if (message.getId() > t1.getId()) {
-                return 1;
-            } else if (message.getId() < t1.getId()) {
-                return -1;
-            }
-            return 0;
-        }
-    }
 }

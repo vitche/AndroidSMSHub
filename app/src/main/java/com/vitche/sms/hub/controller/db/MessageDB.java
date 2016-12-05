@@ -29,10 +29,12 @@ public class MessageDB extends MainAppDB {
     }
 
     private static String tableName(String sourceUID){
-        return "table" + sourceUID;
+        String normalSourceUID = sourceUID.replace("+", "");
+        return "table" + normalSourceUID;
     }
 
     public static void createMessagesTable(Context ctx, String sourceUID) {
+
         exequteAnySingeQuery(ctx, createMessagesTableQuery(sourceUID));
     }
 

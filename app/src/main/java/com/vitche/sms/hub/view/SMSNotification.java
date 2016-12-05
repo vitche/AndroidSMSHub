@@ -3,7 +3,6 @@ package com.vitche.sms.hub.view;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -25,12 +24,12 @@ public class SMSNotification {
         notificationManager = (NotificationManager) ctx
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(ctx, MainActivity.class);
+        Intent intent = new Intent(ctx, SMSHubMainActivity.class);
 
         mBuilder = new Notification.Builder(ctx);
         Notification notification = mBuilder
                 .setContentTitle(sourcesNumber +  " " + ctx.getString(R.string.notification_title)) // TODO set and update source number
-                .setSmallIcon(R.drawable.ic_service_notification)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(false)
                 .build();
 
@@ -50,10 +49,11 @@ public class SMSNotification {
                     mBuilder.setContentTitle(sourcesNumber +  " " + ctx.getString(R.string.notification_title));
 
                 mBuilder.setContentText(messagesNum +  " " + ctx.getString(R.string.notification_content))
-                        .setNumber(messagesNum);
+                        .setNumber(messagesNum)
+                        .setAutoCancel(false);
                 Notification notification = mBuilder.build();
 
-                Intent intent = new Intent(ctx, MainActivity.class);
+                Intent intent = new Intent(ctx, SMSHubMainActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(ctx, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 notification.contentIntent = pendingIntent;
 

@@ -1,105 +1,130 @@
 package com.vitche.sms.hub.view;
 
-import android.content.SharedPreferences;
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vitche.sms.hub.R;
 import com.vitche.sms.hub.controller.db.SourceDB;
-import com.vitche.sms.hub.model.Constants;
-import com.vitche.sms.hub.model.Source;
+import com.vitche.sms.hub.model.PhoneNumberDataSource;
+
+import java.util.List;
 
 public class NewSourceActivity extends AppCompatActivity {
 
     private static final String TAG = "myLogs";
-
+    static final int PICK_CONTACT_REQUEST = 1;
 
     Button btnFromContacts;
-    Button btnSaveSource;
+//    Button btnSaveSource;
     EditText etPhoneNumber;
     EditText etPhoneDescription;
-    Spinner spDeleteSMS;
-
-//    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_source);
 
-//        prefs = getSharedPreferences(Constants.GUARD_SETTINS_PREFS , MODE_PRIVATE);
-
-        btnFromContacts = (Button)findViewById(R.id.btn_from_contacts);
-        btnSaveSource = (Button)findViewById(R.id.btn_save_source_settings);
+        btnFromContacts = (Button) findViewById(R.id.btn_from_contacts);
+//        btnSaveSource = (Button) findViewById(R.id.btn_save_source_settings);
         btnFromContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chooseFromeContacts();
+                startChooser();
             }
         });
-        btnSaveSource.setOnClickListener(new View.OnClickListener() {
+//        btnSaveSource.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                savePrefs();
+//                finish();
+//            }
+//        });
+
+        etPhoneNumber = (EditText) findViewById(R.id.et_phone_number);
+        etPhoneDescription = (EditText) findViewById(R.id.et_phone_decription);
+        etPhoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                savePrefs();
-                finish();
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                etPhoneNumber.setTextColor(Color.BLACK);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
             }
         });
-
-
-        etPhoneNumber = (EditText)findViewById(R.id.et_phone_number);
-        etPhoneDescription = (EditText)findViewById(R.id.et_phone_decription);
-        spDeleteSMS = (Spinner)findViewById(R.id.spinner_del_sms);
 //        TODO validate phone number
-//        String phoneNumber = prefs.getString(Constants.SETTINS_PHONE_NUMBER, "");
-//        if (phoneNumber != null && !phoneNumber.isEmpty()){
-//            etPhoneNumber.setText(phoneNumber);
-//        }
-
-//        TODO spinner
-        final String[] data = {"at mometn", "after 1 min", "after 1 hour", "after 1 day", "never"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spDeleteSMS.setAdapter(adapter);
-        spDeleteSMS.setSelection(4);
-        spDeleteSMS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                Toast.makeText(getBaseContext(), "TODO del"  + data[position], Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        });
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-//        Log.e(TAG, "------NewSourceActivity : onBackPressed: ");
-        savePrefs();
+        if (phoneNumberValid() && !isObservedPhoneNumber()) {
+            super.onBackPressed();
+            savePrefs();
+        } else {
+            showPhoneNumberWarning();
+        }
+
+    }
+
+    private void showPhoneNumberWarning() {
+        if (etPhoneNumber != null){
+            etPhoneNumber.setTextColor(Color.RED);
+            Log.d(TAG, "------NewSourceActivity : showPhoneNumberWarning: " + etPhoneNumber.getTextColors().toString());
+        }
+        Toast.makeText(NewSourceActivity.this, getString(R.string.invalid_phone_format), Toast.LENGTH_SHORT).show();
+    }
+
+    private String getPhoneNumberFromET(){
+        String phNumber = null;
+        if (etPhoneNumber != null) {
+            phNumber = etPhoneNumber.getText().toString();
+            if (phNumber != null && !phNumber.isEmpty()) {
+                return phNumber;
+            }
+        }
+        return null;
+    }
+    private boolean phoneNumberValid() {
+        String phNumber = getPhoneNumberFromET();
+        if ( phNumber!= null ) {
+            return  PhoneNumberUtils.isGlobalPhoneNumber(phNumber);
+        }
+        return false;
+    }
+
+    private boolean isObservedPhoneNumber() {
+        List<PhoneNumberDataSource> list = SourceDB.getAllSorces(this); // TODO check if list size == 0
+            String phNumber = getPhoneNumberFromET();
+            if ( phNumber!= null ){
+                for (PhoneNumberDataSource source : list) {
+                    if (phNumber.equals(source.getPhoneNumber()))
+                        return true;
+                }
+            }
+        return false;
     }
 
     private void savePrefs() {
-//        if (prefs == null){
-//            prefs = getSharedPreferences(Constants.GUARD_SETTINS_PREFS , MODE_PRIVATE);
-//        }
-//        SharedPreferences.Editor ed = prefs.edit();
-//
-//        if (etPhoneNumber != null) {
-//            String phoneNumber = etPhoneNumber.getText().toString();
-//            if (phoneNumber != null && !phoneNumber.isEmpty())
-//                ed.putString(Constants.SETTINS_PHONE_NUMBER, phoneNumber);
-//        }
-//        ed.commit();
         if (etPhoneNumber != null) {
             String phoneNumber = etPhoneNumber.getText().toString();
             if (phoneNumber != null && !phoneNumber.isEmpty())
@@ -107,14 +132,53 @@ public class NewSourceActivity extends AppCompatActivity {
         }
     }
 
-    private void chooseFromeContacts() {
-        Log.d(TAG, "------SettingsActivity : chooseFromeContacts: ");
-        Toast.makeText(this, "TODO chooseFromeContacts", Toast.LENGTH_SHORT).show();
+    private void startChooser() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+        startActivityForResult(intent, PICK_CONTACT_REQUEST);
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        savePrefs();
-//    }
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        switch (reqCode) {
+            case (PICK_CONTACT_REQUEST):
+                if (resultCode == Activity.RESULT_OK) {
+                    Cursor cursor = null;
+                    try {
+                        Uri contactUri = data.getData();
+                        String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+                        cursor = getContentResolver()
+                                .query(contactUri, projection, null, null, null);
+                        String number = null;
+                        if (cursor.moveToFirst()) {
+                            int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                            number = cursor.getString(column);
+                            if (number != null && !number.isEmpty()) {
+                                if (etPhoneNumber != null) {
+                                    etPhoneNumber.setText(number);
+                                }
+                            } else {
+                                showFuckToast();
+                            }
+                        } else {
+                            Log.e(TAG, "------DebugActivity : onActivityResult: cursor did not moveToFirst");
+                            showFuckToast();
+                        }
+
+                    } catch (Exception e) {
+                        Log.e(TAG, Log.getStackTraceString(e));
+                        showFuckToast();
+                    } finally {
+                        if (cursor != null)
+                            cursor.close();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showFuckToast() {
+        Toast.makeText(NewSourceActivity.this, getString(R.string.choose_number_error), Toast.LENGTH_SHORT).show();
+    }
+
 }

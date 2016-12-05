@@ -105,4 +105,6 @@ public class SourceActivity extends AppCompatActivity {
         SourceDB.deleteSource(this, sourceUID);
         finish();
     }
+
+
 }
