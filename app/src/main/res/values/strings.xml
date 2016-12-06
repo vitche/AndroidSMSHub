@@ -13,20 +13,20 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete_source">Remove source</string>
-    <string name="phone_decription">Phone decription:</string>
-    <string name="phone_decription_hint">Decription</string>
+    <string name="phone_decription">Item name:</string>
+    <string name="phone_decription_hint">The item display name</string>
     <string name="del_sms">Delete SMS</string>
     <string name="no_messages">No messages</string>
-    <string name="notification_title">observed sources</string>
+    <string name="notification_title">sources observed</string>
     <string name="notification_content">new messages received</string>
     <string name="observed_sources">Observed sources</string>
     <string name="new_source">New source</string>
     <string name="source">Source</string>
-    <string name="enable_service">Enable service</string>
+    <string name="enable_service">Process messages in background</string>
     <string name="service_started">Started</string>
     <string name="service_stopped">Stopped</string>
     <string name="disable_service_title">Really stop?</string>
-    <string name="disable_service_message">Not able to obtain sources.</string>
+    <string name="disable_service_message">Your data will not be collected any more.</string>
     <string name="choose_number_error">Not able to add. Please, type manually.</string>
     <string name="invalid_phone_format">Please, use a phone number in the following format: "XXX (XX) XXX XX XX"</string>
 </resources>
