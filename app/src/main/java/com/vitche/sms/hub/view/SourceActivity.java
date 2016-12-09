@@ -2,6 +2,7 @@ package com.vitche.sms.hub.view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,7 +25,7 @@ import java.util.Date;
 public class SourceActivity extends AppCompatActivity {
 
     TextView tvSourceId;
-    TextView tvSourceDecription;
+//    TextView tvSourceDecription;
     ListView lvMessages;
     String sourceId;
     @Override
@@ -33,27 +34,32 @@ public class SourceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_source);
 
         tvSourceId = (TextView)findViewById(R.id.tv_source_id);
-        tvSourceDecription = (TextView)findViewById(R.id.tv_source_decription);
+//        tvSourceDecription = (TextView)findViewById(R.id.tv_source_decription);
         lvMessages = (ListView) findViewById(R.id.lv_messages);
         lvMessages.setEmptyView(findViewById(R.id.tv_messages_empty));
 
         sourceId = getIntent().getStringExtra(Constants.CLICKED_ITEM_ID);
 
         Source source = SourceDB.getSourceInfo(this, sourceId);
+        ActionBar actionBar = getSupportActionBar();
         if (source == null) {
             tvSourceId.setText("some error...");
-            tvSourceDecription.setText("some error...");
+//            tvSourceDecription.setText("some error...");
+            if (actionBar != null){
+                actionBar.setTitle(getString(R.string.app_name) );
+            }
         }else {
+            if (actionBar != null){
+                actionBar.setTitle(getString(R.string.app_name) + " - " + source.getDecription());
+            }
             tvSourceId.setText(source.getPhoneNumber());
-            tvSourceDecription.setText(source.getDecription());
+//            tvSourceDecription.setText(source.getDecription());
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, getAllSourceMessages());
             lvMessages.setAdapter(adapter);
+
         }
-
-
-
     }
 
     private ArrayList<String> getAllSourceMessages(){
