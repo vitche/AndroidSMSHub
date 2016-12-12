@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.CheckBox;
@@ -44,6 +45,10 @@ public class SettingsActivity extends AppCompatActivity {
                                                        }
                                                    }
         );
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
+        }
     }
 
 
@@ -76,6 +81,10 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+                if (cbEnableService != null){
+                    cbEnableService.setChecked(true);
+                }
+
             }
         });
         dialog.setCancelable(true);

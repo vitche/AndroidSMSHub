@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -59,18 +60,16 @@ public class SMSReceiver extends BroadcastReceiver {
         if (sources != null)
             for (int i = 0; i < sources.size(); i++) {
                 String phoneNumber = sources.get(i).getPhoneNumber();
-                if (phoneNumber.equals(msg_from) || ("+38" + phoneNumber).equals(msg_from)) {
+                if (phoneNumber.equals(msg_from) || PhoneNumberUtils.compare(phoneNumber, msg_from)) {
                     MessageDB.insertMessage(context, phoneNumber, timeStamp, msgBody);
                     listsInvalidate();
                     SMSNotification.setMessagesNum(SMSNotification.getMessagesNum() + 1);
                     SMSNotification.updateNotification(context, null);
-//                    deleteSMS(context, msgBody, msg_from);
                 } else if (msgBody != null && msgBody.contains(phoneNumber)) {
                     MessageDB.insertMessage(context, phoneNumber, timeStamp, msgBody);
                     listsInvalidate();
                     SMSNotification.setMessagesNum(SMSNotification.getMessagesNum() + 1);
                     SMSNotification.updateNotification(context, null);
-//                    deleteSMS(context, msgBody, msg_from);
                 }
             }
     }
@@ -100,13 +99,9 @@ public class SMSReceiver extends BroadcastReceiver {
                             int thread_id = c.getInt(1);
                             String address = c.getString(2);
                             String body = c.getString(5);
-                            Log.d(TAG, "------SMSReceiver : deleteSMS: id = " + id + "  thread id = " + thread_id);
 
                             if (message.equals(body) && address.equals(number)) {
-//                                context.getContentResolver().delete(
-//                                        Uri.parse("content://sms/" + id), null, null);
                                 context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + thread_id),null,null);
-                                Log.d(TAG, "------SMSReceiver : deleteSMS: deleted :" + number + body + id + " thr id = " + thread_id);
                                 break;
                             }
                         } while (c.moveToNext());

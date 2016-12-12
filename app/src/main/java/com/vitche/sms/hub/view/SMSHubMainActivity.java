@@ -6,17 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.Telephony;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -75,6 +73,12 @@ public class SMSHubMainActivity extends AppCompatActivity {
             if (!isMyServiceRunning(MessageListenerService.class)) {
                 startService(new Intent(this, MessageListenerService.class));
             }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setTitle(getString(R.string.app_name) + " - " + getString(R.string.sources_list_header));
+        }
+
     }
 
     private void showDeleteDialog(final String sourceUID) {
@@ -111,6 +115,7 @@ public class SMSHubMainActivity extends AppCompatActivity {
 
     private void updateListView() {
         sourcesAdapter = new SourcesAdapter(getSoucesList());
+        SMSNotification.updateNotification(this, null);
         if (lvSources != null) {
             lvSources.setAdapter(sourcesAdapter);
             sourcesAdapter.notifyDataSetChanged();
@@ -175,7 +180,8 @@ public class SMSHubMainActivity extends AppCompatActivity {
         }
 
         class ViewHolder {
-            public TextView tvTelNumber;
+            public TextView tvPhoneNumber;
+            public TextView tvPhoneName;
             public TextView tvLastSMSdate;
             public TextView tvLastSMSbody;
         }
@@ -207,7 +213,8 @@ public class SMSHubMainActivity extends AppCompatActivity {
 
                 holder = new ViewHolder();
 
-                holder.tvTelNumber = (TextView) view.findViewById(R.id.tv_item_tel_number);
+                holder.tvPhoneNumber = (TextView) view.findViewById(R.id.tv_item_tel_number);
+                holder.tvPhoneName = (TextView) view.findViewById(R.id.tv_item_tel_name);
                 holder.tvLastSMSdate = (TextView) view.findViewById(R.id.tv_item_date);
                 holder.tvLastSMSbody = (TextView) view.findViewById(R.id.tv_item_body);
                 view.setTag(holder);
@@ -215,7 +222,8 @@ public class SMSHubMainActivity extends AppCompatActivity {
                 holder = (ViewHolder) view.getTag();
             }
 
-            holder.tvTelNumber.setText(source.getPhoneNumber());
+            holder.tvPhoneNumber.setText(source.getPhoneNumber());
+            holder.tvPhoneName.setText(source.getDecription());
             List<Message> messagesList = source.getMessages();
             if (messagesList.size() > 0) {
                 String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(messagesList.get(Constants.LAST_SMS_INDEX).getId()));
