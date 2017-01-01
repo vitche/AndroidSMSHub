@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,11 +80,14 @@ public class SMSHubMainActivity extends AppCompatActivity {
             actionBar.setTitle(getString(R.string.app_name) + " - " + getString(R.string.sources_list_header));
         }
 
+//        SMSNotification.setMessagesNum(0);
+//        SMSNotification.updateNotification(this, "" + SourceDB.getAllSorces(this).size());
+//        Log.e(TAG, "------SMSHubMainActivity : onCreate: ");
     }
 
     private void showDeleteDialog(final String sourceUID) {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle('"' + getString(R.string.delete_source) + "\" " + sourceUID);
+        dialog.setTitle(getString(R.string.delete_source) + " " + '"' + sourceUID + '"' + '?');
         dialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -111,6 +115,7 @@ public class SMSHubMainActivity extends AppCompatActivity {
         updateListView();
         SMSNotification.setMessagesNum(0);
         SMSNotification.updateNotification(this, "" + SourceDB.getAllSorces(this).size());
+        Log.e(TAG, "------SMSHubMainActivity : onResume: ");
     }
 
     private void updateListView() {
