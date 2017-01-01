@@ -10,13 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".view.SMSHubMainActivity">
 
-    <TextView
-        android:text="@string/sources_list_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"/>
-
     <ListView
         android:id="@+id/lv_sources"
         android:layout_width="match_parent"
@@ -26,7 +19,7 @@
         android:id="@+id/empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="@string/no_sources" />
+        android:text="@string/no_sources"
+        android:visibility="gone" />
 
 </LinearLayout>
