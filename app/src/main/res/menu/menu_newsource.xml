@@ -5,7 +5,7 @@
 
     <item android:id="@+id/menu_create_new_source"
         android:title=""
-        android:icon="@android:drawable/checkbox_on_background"
+        android:icon="@drawable/ic_done_white_24dp"
         android:orderInCategory="100"
         app:showAsAction="always" />
 

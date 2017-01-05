@@ -28,7 +28,7 @@
     <string name="disable_service_title">Really stop?</string>
     <string name="disable_service_message">Your data will not be collected any more.</string>
     <string name="choose_number_error">Not able to add. Please, type manually.</string>
-    <string name="invalid_phone_format">Please, use a phone number in the following format: "XXX (XX) XXX XX XX"</string>
+    <string name="invalid_phone_format">Please, use a phone number in the following format: "XXX (XX) XXX XX XX" 10 digits</string>
     <string name="invalid_decription">Please, specify a correct event name.</string>
     <string name="close_without_saving">Close without saving?</string>
     <string name="phone_number_exist">This phone number already exists.</string>
