@@ -158,7 +158,7 @@ public class NewSourceActivity extends AppCompatActivity {
         String phNumber = null;
         if (etPhoneNumber != null) {
             phNumber = etPhoneNumber.getText().toString();
-            if (phNumber != null && !phNumber.isEmpty()) {
+            if (phNumber != null && !phNumber.isEmpty() && phNumber.length() > 9) {
                 return phNumber;
             }
         }

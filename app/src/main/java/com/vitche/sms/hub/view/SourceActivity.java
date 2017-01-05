@@ -90,7 +90,7 @@ public class SourceActivity extends AppCompatActivity {
 
     private void showDeleteDialog() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.delete_source) + " " + sourceId);
+        dialog.setTitle(getString(R.string.delete_source) + " " +'"' + sourceId + '"' + '?');
         dialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
