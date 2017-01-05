@@ -17,7 +17,7 @@
     <string name="phone_decription_hint">The item display name</string>
     <string name="del_sms">Delete SMS</string>
     <string name="no_messages">No messages</string>
-    <string name="notification_title">sources observed</string>
+    <string name="notification_title">SMS sources</string>
     <string name="notification_content">new messages received</string>
     <string name="observed_sources">Observed sources</string>
     <string name="new_source">New source</string>
